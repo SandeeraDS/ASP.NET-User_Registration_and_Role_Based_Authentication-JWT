@@ -9,10 +9,18 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ToastrModule } from "ngx-toastr";
 import { UserComponent } from "./user/user.component";
 import { SignInComponent } from "./user/sign-in/sign-in.component";
-import { HomeComponent } from './home/home.component';
+import { HomeComponent } from "./home/home.component";
+import { appRoutes } from "./appRouting.module";
+import { RouterModule } from "@angular/router";
 
 @NgModule({
-  declarations: [AppComponent, SignUpComponent, UserComponent, SignInComponent, HomeComponent],
+  declarations: [
+    AppComponent,
+    SignUpComponent,
+    UserComponent,
+    SignInComponent,
+    HomeComponent
+  ],
   imports: [
     BrowserModule,
     FormsModule,
@@ -20,7 +28,8 @@ import { HomeComponent } from './home/home.component';
     BrowserAnimationsModule,
     ToastrModule.forRoot({
       progressBar: true
-    })
+    }),
+    RouterModule.forRoot(appRoutes)
   ],
   providers: [],
   bootstrap: [AppComponent]
