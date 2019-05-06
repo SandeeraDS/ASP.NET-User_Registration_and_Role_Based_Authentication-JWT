@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Web.Http;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
@@ -40,6 +41,25 @@ namespace WebApi.Controllers
             IdentityResult result = manager.Create(user, model.Password);
 
             return result;
+        }
+
+        [Route("GetUserClaims")]
+        [HttpGet]
+        [Authorize]
+        public AccountModel GetUserClaims()
+        {
+            //get from saved claims from grant method in oAuthProvider
+            var identityClaims = (ClaimsIdentity)User.Identity;
+            
+            AccountModel model = new AccountModel()
+            {
+                UserName = identityClaims.FindFirst("Username").Value,
+                Email = identityClaims.FindFirst("Email").Value,
+                FirstName = identityClaims.FindFirst("FirstName").Value,
+                LastName = identityClaims.FindFirst("LastName").Value,
+                LoggedOn = identityClaims.FindFirst("LoggedOn").Value
+            };
+            return model;
         }
     }
 }
