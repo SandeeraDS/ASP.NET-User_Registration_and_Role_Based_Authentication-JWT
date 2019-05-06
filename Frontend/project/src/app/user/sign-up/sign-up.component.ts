@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
-import { User } from "../shared/model/user.model";
+import { User } from "../../shared/model/user.model";
 import { NgForm } from "@angular/forms";
-import { UserService } from "../shared/user.service";
+import { UserService } from "../../shared/user.service";
 import { ToastrService } from "ngx-toastr";
 
 @Component({
