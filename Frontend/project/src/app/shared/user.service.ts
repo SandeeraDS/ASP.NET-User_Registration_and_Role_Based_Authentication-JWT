@@ -1,12 +1,12 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { User } from "./model/user.model";
 
 @Injectable({
   providedIn: "root"
 })
 export class UserService {
-  readonly rootUrl = "http://localhost:60320/api";
+  readonly rootUrl = "http://localhost:60320";
 
   constructor(private http: HttpClient) {}
 
@@ -18,6 +18,24 @@ export class UserService {
       FirstName: user.FirstName,
       LastName: user.LastName
     };
-    return this.http.post(this.rootUrl + "/Account/Register", body);
+    return this.http.post(this.rootUrl + "/api/Account/Register", body);
+  }
+
+  userAuthentication(userName, password) {
+    var data =
+      "username=" + userName + "&password=" + password + "&grant_type=password";
+
+    var reqHeader = new HttpHeaders({
+      "Content-Type": "application/x-www-urlencoded",
+      "No-Auth": "True"
+    });
+
+    return this.http.post(this.rootUrl + "/login", data, {
+      headers: reqHeader
+    });
+  }
+
+  getUserClaims() {
+    return this.http.get(this.rootUrl + "/api/Account/GetUserClaims");
   }
 }
