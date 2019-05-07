@@ -39,6 +39,8 @@ namespace WebApi.Controllers
 
             //Heare create User
             IdentityResult result = manager.Create(user, model.Password);
+            manager.AddToRoles(user.Id, model.Roles);
+
 
             return result;
         }
@@ -60,6 +62,30 @@ namespace WebApi.Controllers
                 LoggedOn = identityClaims.FindFirst("LoggedOn").Value
             };
             return model;
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        [Route("ForAdminRole")]
+        public string ForAdminRole()
+        {
+            return "for admin role";
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Author")]
+        [Route("ForAuthorRole")]
+        public string ForAuthorRole()
+        {
+            return "For author role";
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Author,Reader")]
+        [Route("ForAuthorOrReader")]
+        public string ForAuthorOrReader()
+        {
+            return "For author/reader role";
         }
     }
 }

@@ -14,6 +14,7 @@ export class SignUpComponent implements OnInit {
 
   user: User;
   emailPattern = "^[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,4}$";
+  roles: any[];
 
   constructor(
     private userService: UserService,
@@ -29,9 +30,24 @@ export class SignUpComponent implements OnInit {
       FirstName: "",
       LastName: ""
     };
+
+    this.userService.getAllRoles().subscribe((data: any) => {
+      //add property callled selected
+      data.forEach(obj => (obj.selected = false));
+      this.roles = data;
+      console.log(this.roles);
+    });
+  }
+
+  updateSelectedRoles(index) {
+    this.roles[index].selected = !this.roles[index].selected;
+    console.log(this.roles);
   }
 
   OnSubmit() {
+    var selectedRoles = this.roles.filter(x => x.selected).map(y => y.Name);
+    console.log(selectedRoles);
+
     this.user.UserName = this.signupForm.value.UserName;
     this.user.Email = this.signupForm.value.Email;
     this.user.Password = this.signupForm.value.Password;
@@ -40,19 +56,16 @@ export class SignUpComponent implements OnInit {
 
     console.log(this.user);
 
-    // this.user.email = this.signupForm.value.userData.email;
-    // this.user.secretQuestion = this.signupForm.value.secret;
-    // this.user.answer = this.signupForm.value.questionAnswer;
-    // this.user.gender = this.signupForm.value.gender;
-    // console.log(this.signupForm.value);
-    // console.log(this.user.UserName);
-    this.userService.registerUser(this.user).subscribe((data: any) => {
-      if (data.Succeeded) {
-        this.signupForm.reset();
-        this.toastr.success("User Registration Successful");
-      } else {
-        this.toastr.error(data.Errors[0]);
-      }
-    });
+    this.userService
+      .registerUser(this.user, selectedRoles)
+      .subscribe((data: any) => {
+        if (data.Succeeded) {
+          this.signupForm.reset();
+          if (this.roles) this.roles.map(x => (x.selected = false));
+          this.toastr.success("User Registration Successful");
+        } else {
+          this.toastr.error(data.Errors[0]);
+        }
+      });
   }
 }

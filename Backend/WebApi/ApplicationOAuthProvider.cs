@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OAuth;
 using WebApi.Models;
 
@@ -38,8 +39,20 @@ namespace WebApi
                 identity.AddClaim(new Claim("LastName",user.LastName));
                 identity.AddClaim(new Claim("LoggedOn", DateTime.Now.ToString()));
 
+                var userRoles = userManager.GetRoles(user.Id);
+                foreach (string roleNaame in userRoles)
+                {
+                    identity.AddClaim(new Claim(ClaimTypes.Role,roleNaame));
+                }
+
+                var additionalData = new AuthenticationProperties(new Dictionary<string, string>{
+                    {
+                        "role", Newtonsoft.Json.JsonConvert.SerializeObject(userRoles)
+                    }
+                });
+                var token = new AuthenticationTicket(identity, additionalData);
                 //now validate user
-                context.Validated(identity);
+                context.Validated(token);
 
 
             }
@@ -47,6 +60,17 @@ namespace WebApi
             {
                 return;
             }
+        }
+
+        //to add roles to token
+        public override Task TokenEndpoint(OAuthTokenEndpointContext context)
+        {
+            foreach (KeyValuePair<string, string> property in context.Properties.Dictionary)
+            {
+                context.AdditionalResponseParameters.Add(property.Key, property.Value);
+            }
+
+            return Task.FromResult<object>(null);
         }
     }
 }
