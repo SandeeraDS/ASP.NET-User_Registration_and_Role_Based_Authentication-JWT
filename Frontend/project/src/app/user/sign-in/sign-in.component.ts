@@ -30,6 +30,8 @@ export class SignInComponent implements OnInit {
       (data: any) => {
         if (data.access_token != null) {
           localStorage.setItem("userToken", data.access_token);
+          localStorage.setItem("userRoles", data.role);
+          console.log(data.role);
           this.router.navigate(["/home"]);
         }
       },

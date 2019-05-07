@@ -43,4 +43,16 @@ export class UserService {
   getAllRoles() {
     return this.http.get(this.rootUrl + "/api/Role/GetAllRoles");
   }
+
+  roleMatch(allowedRoles): boolean {
+    var isMatch = false;
+    var userRoles: string[] = JSON.parse(localStorage.getItem("userRoles"));
+    allowedRoles.forEach(element => {
+      if (userRoles.indexOf(element) > -1) {
+        isMatch = true;
+        return false;
+      }
+    });
+    return isMatch;
+  }
 }
